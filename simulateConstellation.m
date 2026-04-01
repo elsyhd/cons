@@ -6,9 +6,9 @@ tspan = startTime + minutes(0:5:24*60);
 
 % set variation parameters
 h = 800e3;
-i = deg2rad(15);
-RAAN = deg2rad(linspace(0, 359, 8));
-nSat = 24;
+i = deg2rad([10 10 15 15 20 20 25 25]);
+RAAN = deg2rad(linspace(0, 300, 8));
+nSat = 50;
 
 users = [ ...
     deg2rad(5.5),    deg2rad(95.3),   0;
@@ -26,23 +26,24 @@ siteNames = { ...
 
 % propagate each satellites
 r_leo = orbitProp(h, i, RAAN, nSat, tspan);
-r_all = addGeoHostedPayload(r_leo, tspan, deg2rad(117));
+geoLat = deg2rad(0);
+geoLon = deg2rad(113);
+r_all = addGeoHostedPayload(r_leo, tspan, geoLat, geoLon);
 
 % check availability
-[A, visibleSat] = satAvailability(r_all, users);
+[A, visibleSat, meanVisibleAll, maxVisiblePerTarget] = satAvailability(r_all, users);
+[gdop, meanGDOP] = satGDOP(r_all, users, visibleSat);
 
 % check cost
 Ctot = satCost(r_all, 1);
 
-visibleAny = any(visibleSat, 3);
-visibleCount = sum(visibleAny, 2);
-
 for idx = 1:numel(siteNames)
     fprintf('%s Availability = %.3f\n', siteNames{idx}, A(idx));
+    fprintf('%s Mean Visible (overall) = %.2f\n', siteNames{idx}, meanVisibleAll(idx));
+    fprintf('%s Max Visible            = %d\n', siteNames{idx}, maxVisiblePerTarget(idx));
+    fprintf('%s Mean GDOP              = %.2f\n', siteNames{idx}, meanGDOP(idx));
 end
 fprintf('Total Cost   = %.2f\n', Ctot);
-fprintf('Mean Visible = %.2f\n', mean(visibleCount));
-fprintf('Max Visible  = %d\n', max(visibleCount));
 
 plotConstellation3DVideo(r_all, visibleSat, users, siteNames, tspan, 'constellation_simulation.mp4');
 end

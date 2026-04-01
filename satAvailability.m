@@ -1,4 +1,4 @@
-function [A, visibleSat] = satAvailability(r_sat, users)
+function [A, visibleSat, meanVisibleAll, maxVisiblePerTarget] = satAvailability(r_sat, users)
 
 % constant
 Re = 6378e3;
@@ -9,6 +9,8 @@ nUser = size(users, 1);
 
 visibleSat = zeros(Nt, nSat, nUser);
 A = zeros(nUser, 1);
+meanVisibleAll = zeros(nUser, 1);
+maxVisiblePerTarget = zeros(nUser, 1);
 
 % loop for each user/ target point
 for u = 1:nUser
@@ -23,6 +25,7 @@ for u = 1:nUser
     ru = [xu; yu; zu];
 
     delta = zeros(Nt, 1);
+    visibleCount = zeros(Nt, 1);
     
     % loop for each timestep
     for k = 1:Nt
@@ -54,6 +57,8 @@ for u = 1:nUser
             end
         end
         
+        visibleCount(k) = count;
+
         % check if minimum 4 satellite visible
         if count >= 4
             delta(k) = 1;
@@ -61,6 +66,8 @@ for u = 1:nUser
     end
 
     A(u) = mean(delta);
+    meanVisibleAll(u) = mean(visibleCount);
+    maxVisiblePerTarget(u) = max(visibleCount);
 end
 
 end

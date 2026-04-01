@@ -35,7 +35,7 @@ for p = 1:nPlane
                      0];
 
             % PQW -> ECI
-            r_eci = rotz(RAAN(p)) * rotx(i) * rotz(omega) * r_pqw;
+            r_eci = rotz(RAAN(p)) * rotx(i(p)) * rotz(omega) * r_pqw;
 
             % ECI -> ECEF
             r_ecef = eci2ecef(tspan(k), r_eci');

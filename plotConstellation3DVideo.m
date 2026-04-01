@@ -26,6 +26,13 @@ end
 
 targetCenter = mean(targetPos, 2);
 viewDir = targetCenter / norm(targetCenter);
+equatorNormal = [0; 0; 1];
+viewDir = viewDir - dot(viewDir, equatorNormal) * equatorNormal;
+if norm(viewDir) < 1e-9
+    viewDir = [1; 0; 0];
+else
+    viewDir = viewDir / norm(viewDir);
+end
 
 [earthX, earthY, earthZ] = sphere(80);
 
