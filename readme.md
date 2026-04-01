@@ -1,5 +1,5 @@
 # Regional Nav Sat Constellation Simulation
-# Update 24/03/2026
+# Update 02/04/2026
 
 This project simulates a regional satellite navigation constellation for Indonesia using MATLAB.
 
@@ -8,6 +8,7 @@ It includes:
 - 1 hosted GEO payload
 - availability check
 - simple cost estimation
+- GDOP calculation
 
 # how to use
 - run simulateConsttellation.m
@@ -31,3 +32,6 @@ It includes:
 
 - plotConstellation3DVideo.m
   creates the 3D constellation plot
+
+- satGDOP.m
+  calculate gdop for each target point over Indonesia
