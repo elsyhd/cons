@@ -79,9 +79,12 @@ geoMarker = plot3(ax, r_sat(1,1,nSat), r_sat(2,1,nSat), r_sat(3,1,nSat), ...
 text(ax, r_sat(1,1,nSat), r_sat(2,1,nSat), r_sat(3,1,nSat), ...
     '  GEO', 'Color', [1 1 0], 'FontSize', 10, 'FontWeight', 'bold');
 
-losLines = gobjects(nLeo, 1);
+losLines = gobjects(nLeo, nUser);
 for s = 1:nLeo
-    losLines(s) = plot3(ax, [0 0], [0 0], [0 0], 'r-', 'LineWidth', 1.2, 'Visible', 'off');
+    for u = 1:nUser
+        losLines(s, u) = plot3(ax, [0 0], [0 0], [0 0], 'r-', ...
+            'LineWidth', 1.2, 'Visible', 'off');
+    end
 end
 
 title(ax, 'Regional Nav Satellite Constellation Simulation', 'Color', 'w');
@@ -121,15 +124,22 @@ for k = 1:Nt
         if ~isempty(visibleUsers)
             set(leoMarkers(s), 'MarkerFaceColor', [1 0 0], 'MarkerEdgeColor', [1 0 0]);
 
-            u = visibleUsers(1);
-            set(losLines(s), ...
-                'XData', [targetPos(1,u) r_sat(1,k,s)], ...
-                'YData', [targetPos(2,u) r_sat(2,k,s)], ...
-                'ZData', [targetPos(3,u) r_sat(3,k,s)], ...
-                'Visible', 'on');
+            for u = 1:nUser
+                if any(visibleUsers == u)
+                    set(losLines(s, u), ...
+                        'XData', [targetPos(1,u) r_sat(1,k,s)], ...
+                        'YData', [targetPos(2,u) r_sat(2,k,s)], ...
+                        'ZData', [targetPos(3,u) r_sat(3,k,s)], ...
+                        'Visible', 'on');
+                else
+                    set(losLines(s, u), 'Visible', 'off');
+                end
+            end
         else
             set(leoMarkers(s), 'MarkerFaceColor', [0 0.8 1], 'MarkerEdgeColor', [0 0.8 1]);
-            set(losLines(s), 'Visible', 'off');
+            for u = 1:nUser
+                set(losLines(s, u), 'Visible', 'off');
+            end
         end
     end
 

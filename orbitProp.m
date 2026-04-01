@@ -1,4 +1,8 @@
-function r_ECEF = orbitProp(h, i, RAAN, nSat, tspan)
+function r_ECEF = orbitProp(h, i, RAAN, nSat, tspan, f)
+
+if nargin < 6
+    f = 1;
+end
 
 % constant
 Re = 6378e3;
@@ -9,17 +13,23 @@ n = sqrt(mu / r^3);
 
 Nt = length(tspan);
 nPlane = numel(RAAN);
-satsPerPlane = distributeSatellites(nSat, nPlane);
+
+if mod(nSat, nPlane) ~= 0
+    error('Walker phasing requires nSat to be divisible by the number of planes.');
+end
+
+satsPerPlane = nSat / nPlane;
 r_ECEF = zeros(3, Nt, nSat);
 
-% loop for each orbital plane
+% loop for each orbital planet
 satIdx = 1;
 for p = 1:nPlane
-    nThisPlane = satsPerPlane(p);
+    nThisPlane = satsPerPlane;
     
     % loop for each satellite inside the plane
     for s = 1:nThisPlane
-        nu0 = 2*pi*(s-1)/nThisPlane;
+        % Walker phasing from M_ij = 2*pi/S*(j-1) + 2*pi/N*F*(i-1)
+        nu0 = 2*pi*(s-1)/nThisPlane + 2*pi*f*(p-1)/nSat;
         omega = 0;
         
         % loop for each timestep
@@ -35,7 +45,7 @@ for p = 1:nPlane
                      0];
 
             % PQW -> ECI
-            r_eci = rotz(RAAN(p)) * rotx(i(p)) * rotz(omega) * r_pqw;
+            r_eci = rotz(RAAN(p)) * rotx(i) * rotz(omega) * r_pqw;
 
             % ECI -> ECEF
             r_ecef = eci2ecef(tspan(k), r_eci');
@@ -63,15 +73,4 @@ function R = rotz(a)
 R = [cos(a) -sin(a) 0;
      sin(a)  cos(a) 0;
      0       0      1];
-end
-
-function satsPerPlane = distributeSatellites(nSat, nPlane)
-baseCount = floor(nSat / nPlane);
-remainder = mod(nSat, nPlane);
-
-satsPerPlane = baseCount * ones(1, nPlane);
-
-for idx = 1:remainder
-    satsPerPlane(idx) = satsPerPlane(idx) + 1;
-end
 end
