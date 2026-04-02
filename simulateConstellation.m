@@ -5,25 +5,40 @@ startTime = datetime(2026, 4, 2, 0, 0, 0, 'TimeZone', 'UTC');
 tspan = startTime + minutes(0:5:24*60);
 
 % set variation parameters
-h = 800e3;
-i = deg2rad(15);
-P = 8;
-RAAN = 2*pi*(0:P-1)/P;
-nSat = 32;
+h = 1500e3;
+i = deg2rad(20);
+%P = 4;
+%RAAN = 2*pi*(0:P-1)/P;
+RAAN = deg2rad([0.042 90 180 269.791]);
+nSat = 24;
 f = 0;
 
+% users = [ ...
+%     deg2rad(5.5),    deg2rad(95.3),   0;
+%     deg2rad(-2.5),   deg2rad(140.7),  0;
+%     deg2rad(1.67),   deg2rad(125.0),  0;
+%     deg2rad(-10.0),  deg2rad(120.5),  0;
+%     deg2rad(-7.5),   deg2rad(107.5),  0];
+% 
+% siteNames = { ...
+%     'Banda Aceh', ...
+%     'Jayapura', ...
+%     'Minahasa Utara', ...
+%     'Sumba Timur', ...
+%     'Garut'};
+
 users = [ ...
-    deg2rad(5.5),    deg2rad(95.3),   0;
-    deg2rad(-2.5),   deg2rad(140.7),  0;
-    deg2rad(1.67),   deg2rad(125.0),  0;
-    deg2rad(-10.0),  deg2rad(120.5),  0;
-    deg2rad(-7.5),   deg2rad(107.5),  0];
+    deg2rad(0.5),    deg2rad(123.017),   0;
+    deg2rad(-2.541),   deg2rad(140.737),  0;
+    deg2rad(-8.504),   deg2rad(117.429),  0;
+    deg2rad(5.5),  deg2rad(95.3),  0;
+    deg2rad(-6.9),   deg2rad(108),  0];
 
 siteNames = { ...
-    'Banda Aceh', ...
+    'Gorontalp', ...
     'Jayapura', ...
-    'Minahasa Utara', ...
-    'Sumba Timur', ...
+    'Sumbawa', ...
+    'Banda Aceh', ...
     'Garut'};
 
 % propagate each satellites
@@ -34,7 +49,7 @@ r_all = addGeoHostedPayload(r_leo, tspan, geoLat, geoLon);
 
 % check availability
 [A, visibleSat, meanVisibleAll, maxVisiblePerTarget] = satAvailability(r_all, users);
-[gdop, meanGDOP] = satGDOP(r_all, users, visibleSat);
+[~, meanGDOP] = satGDOP(r_all, users, visibleSat);
 
 % check cost
 Ctot = satCost(r_all, 1);

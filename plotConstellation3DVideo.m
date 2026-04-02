@@ -1,9 +1,5 @@
 function plotConstellation3DVideo(r_sat, visibleSat, users, siteNames, tspan, outputFile)
 
-if nargin < 6
-    outputFile = 'constellation_simulation.mp4';
-end
-
 % constant
 Re = 6378e3;
 

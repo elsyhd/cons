@@ -42,7 +42,7 @@ for u = 1:nUser
             end
 
             los = rhoVec / rho;
-            H(j, :) = [-los.', 1];
+            H(j, :) = [los.', 1];
         end
 
         normalMatrix = H.' * H;

@@ -1,9 +1,5 @@
 function r_ECEF = orbitProp(h, i, RAAN, nSat, tspan, f)
 
-if nargin < 6
-    f = 1;
-end
-
 % constant
 Re = 6378e3;
 mu = 3.986e14;
