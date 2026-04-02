@@ -23,7 +23,7 @@ for u = 1:nUser
 
     % loop for each timestep
     for k = 1:Nt
-        visIdx = find(squeeze(visibleSat(k, :, u)) > 0);
+        visIdx = find(squeeze(visibleSat(k, :, u)) == 1);
 
         if numel(visIdx) < 4
             continue;
@@ -36,10 +36,6 @@ for u = 1:nUser
             s = visIdx(j);
             rhoVec = r_sat(:, k, s) - ru;
             rho = norm(rhoVec);
-
-            if rho <= 0
-                continue;
-            end
 
             los = rhoVec / rho;
             H(j, :) = [los.', 1];
